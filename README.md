@@ -2,6 +2,14 @@
 
 This directory contains the core program files for the Eco-Travel AI application.
 
+**Name:** Ahmed Masoud Baghni
+**NIM:** 20230040030
+
+**Website Link hosted on manus-cloud service:** https://y0h0i3cy5nxj.manus.space/
+**Documntaion + Promotional Banner:**
+**Promotional Video:**
+
+
 ## Project Overview
 Eco-Travel AI is an innovative web application that leverages artificial intelligence to generate personalized sustainable travel itineraries. It addresses the growing need for responsible tourism by prioritizing eco-friendly accommodations, local businesses, authentic cultural interactions, and off-the-beaten-path attractions that minimize environmental impact while maximizing community benefit.
 
