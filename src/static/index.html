@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-Travel AI Itinerary Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .form-section h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .results-section h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .itinerary-day {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .day-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .activity {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .activity-title {
+            font-weight: bold;
+            color: #4a5568;
+            margin-bottom: 5px;
+        }
+
+        .activity-details {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .activity-description {
+            color: #2d3748;
+            line-height: 1.5;
+        }
+
+        .eco-badge {
+            display: inline-block;
+            background: #48bb78;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌱 Eco-Travel AI</h1>
+            <p>Generate sustainable and authentic travel itineraries powered by AI</p>
+        </div>
+
+        <div class="main-content">
+            <div class="form-section">
+                <h2>Plan Your Eco-Friendly Journey</h2>
+                <form id="itinerary-form">
+                    <div class="form-group">
+                        <label for="destination">Destination</label>
+                        <input type="text" id="destination" name="destination" placeholder="e.g., Bali, Indonesia" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="duration">Trip Duration (days)</label>
+                        <select id="duration" name="duration" required>
+                            <option value="">Select duration</option>
+                            <option value="3">3 days</option>
+                            <option value="5">5 days</option>
+                            <option value="7">7 days</option>
+                            <option value="10">10 days</option>
+                            <option value="14">14 days</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="budget">Budget (USD)</label>
+                        <select id="budget" name="budget" required>
+                            <option value="">Select budget range</option>
+                            <option value="budget">Budget ($50-100/day)</option>
+                            <option value="mid-range">Mid-range ($100-200/day)</option>
+                            <option value="luxury">Luxury ($200+/day)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="travel-style">Travel Style</label>
+                        <select id="travel-style" name="travel-style" required>
+                            <option value="">Select travel style</option>
+                            <option value="adventure">Adventure & Outdoor</option>
+                            <option value="cultural">Cultural & Historical</option>
+                            <option value="relaxation">Relaxation & Wellness</option>
+                            <option value="nature">Nature & Wildlife</option>
+                            <option value="mixed">Mixed Experience</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Interests (select all that apply)</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="hiking" name="interests" value="hiking">
+                                <label for="hiking">Hiking</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="food" name="interests" value="food">
+                                <label for="food">Local Food</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="art" name="interests" value="art">
+                                <label for="art">Art & Culture</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="wildlife" name="interests" value="wildlife">
+                                <label for="wildlife">Wildlife</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="beaches" name="interests" value="beaches">
+                                <label for="beaches">Beaches</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="markets" name="interests" value="markets">
+                                <label for="markets">Local Markets</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="generate-btn" id="generate-btn">
+                        Generate Eco-Itinerary
+                    </button>
+                </form>
+            </div>
+
+            <div class="results-section">
+                <h2>Your Sustainable Itinerary</h2>
+                <div id="results-content">
+                    <p style="text-align: center; color: #718096; padding: 40px;">
+                        Fill out the form and click "Generate Eco-Itinerary" to get your personalized sustainable travel plan!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('itinerary-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {
+                destination: formData.get('destination'),
+                duration: parseInt(formData.get('duration')),
+                budget: formData.get('budget'),
+                travel_style: formData.get('travel-style'),
+                interests: formData.getAll('interests')
+            };
+
+            // Show loading state
+            const resultsContent = document.getElementById('results-content');
+            const generateBtn = document.getElementById('generate-btn');
+            
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Generating...';
+            
+            resultsContent.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>AI is crafting your sustainable itinerary...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch('/api/generate-itinerary', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                displayItinerary(result.itinerary);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultsContent.innerHTML = `
+                    <div style="text-align: center; color: #e53e3e; padding: 40px;">
+                        <p>Sorry, there was an error generating your itinerary. Please try again.</p>
+                        <p style="font-size: 0.9rem; margin-top: 10px;">Error: ${error.message}</p>
+                    </div>
+                `;
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.textContent = 'Generate Eco-Itinerary';
+            }
+        });
+
+        function displayItinerary(itinerary) {
+            const resultsContent = document.getElementById('results-content');
+            
+            let html = '';
+            itinerary.forEach((day, index) => {
+                html += `
+                    <div class="itinerary-day">
+                        <div class="day-title">Day ${index + 1}: ${day.title}</div>
+                `;
+                
+                day.activities.forEach(activity => {
+                    html += `
+                        <div class="activity">
+                            <div class="activity-title">${activity.name}</div>
+                            <div class="activity-details">
+                                📍 ${activity.location} | 💰 ${activity.cost} | ⏰ ${activity.duration}
+                            </div>
+                            <div class="activity-description">${activity.description}</div>
+                            ${activity.eco_friendly ? '<span class="eco-badge">🌱 Eco-Friendly</span>' : ''}
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+            });
+            
+            resultsContent.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
+
